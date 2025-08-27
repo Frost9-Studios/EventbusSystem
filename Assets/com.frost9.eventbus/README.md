@@ -33,7 +33,134 @@ using var subscription = bus.Observe<HealthChanged>()
 bus.Publish(new HealthChanged(75));
 ```
 
-### Reactive Composition
+## Complete Usage Examples
+
+### 1) DI Setup (VContainer)
+
+```csharp
+// Composition root (e.g., on your LifetimeScope)
+public class GameInstaller : LifetimeScope
+{
+    protected override void Configure(IContainerBuilder builder)
+    {
+        builder.Register<EventBus>(Lifetime.Singleton).As<IEventBus>();
+        builder.RegisterEntryPoint<BattleSystems>(); // optional
+    }
+}
+```
+
+### 2) Event Types (Commands vs State)
+
+```csharp
+public readonly struct DamageApplied 
+{ 
+    public readonly int TargetId, Amount; 
+    public DamageApplied(int t, int a) { TargetId = t; Amount = a; } 
+}
+
+public readonly struct HealthChanged 
+{ 
+    public readonly int TargetId, Value;  
+    public HealthChanged(int t, int v) { TargetId = t; Value = v; } 
+}
+```
+
+### 3) A System that Publishes State from a Command
+
+```csharp
+using R3;
+
+public sealed class HealthSystem : IStartable, IDisposable
+{
+    readonly IEventBus _bus;
+    readonly CompositeDisposable _cd = new();
+    readonly Dictionary<int,int> _hp = new();
+
+    public HealthSystem(IEventBus bus) => _bus = bus;
+
+    public void Start()
+    {
+        _cd.Add(_bus.Observe<DamageApplied>()
+            .SubscribeSafe(cmd =>
+            {
+                var v = (_hp.TryGetValue(cmd.TargetId, out var h) ? h : 100) - cmd.Amount;
+                v = Math.Max(v, 0);
+                _hp[cmd.TargetId] = v;
+                _bus.Publish(new HealthChanged(cmd.TargetId, v));
+            }));
+    }
+
+    public void Dispose() => _cd.Dispose();
+}
+```
+
+### 4) An Enemy that Listens Only to Its Own Health
+
+```csharp
+using R3;
+using UnityEngine;
+
+public sealed class Enemy : MonoBehaviour
+{
+    [SerializeField] int id;
+    IEventBus _bus;
+    CompositeDisposable _cd = new();
+
+    public Enemy(IEventBus bus) => _bus = bus;
+
+    void OnEnable()
+    {
+        _cd.Add(_bus.Observe<HealthChanged>()
+            .Where(e => e.TargetId == id)                // filter by identity
+            .DistinctUntilChanged(e => e.Value)          // drop duplicates
+            .SampleFrame(1)                               // at most once per frame
+            .SubscribeSafe(e => ApplyHealth(e.Value)));
+    }
+
+    void OnDisable() { _cd.Dispose(); _cd = new(); }
+
+    void ApplyHealth(int v) { /* update UI/anim */ }
+}
+```
+
+### 5) One-Shot Orchestration with Next<T>() + UniTask
+
+```csharp
+using Cysharp.Threading.Tasks;
+
+public sealed class FaintWatcher : MonoBehaviour
+{
+    IEventBus _bus;
+    public FaintWatcher(IEventBus bus) => _bus = bus;
+
+    async UniTaskVoid WatchMyFaint(int myId)
+    {
+        // await the next matching event, auto-unsubscribes when it hits (or on cancel)
+        var _ = await _bus.Next<HealthChanged>(e => e.TargetId == myId && e.Value <= 0,
+                                               this.GetCancellationTokenOnDestroy());
+        await PlayFaintAnimationAsync();
+    }
+}
+```
+
+### 6) Publishing from Anywhere (Player Hits Enemy B)
+
+```csharp
+// A controller, ability system, etc.
+public void OnHitEnemy(int enemyId, int dmg)
+{
+    _bus.Publish(new DamageApplied(enemyId, dmg));
+}
+```
+
+## Notes
+
+- **One universal IEventBus instance** (DI singleton)
+- **A channel = "events of type T"** - First `Observe<T>()` creates a Subject<T>; publish before observe is a no-op
+- **SubscribeSafe** wraps your handler in try/catch so one bad subscriber doesn't break delivery
+- **Main-thread publishing enforced** - do async work off-thread with UniTask, then `SwitchToMainThread()` before Publish
+
+## Reactive Composition
 
 ```csharp
 // Filter and transform with R3 operators
@@ -48,7 +175,7 @@ bus.Observe<MouseMove>()
     .SubscribeSafe(HandleMouseMove);
 ```
 
-### Async Patterns
+## Async Patterns
 
 ```csharp
 // Wait for next event
