@@ -1,0 +1,23 @@
+{
+  "name": "com.frost9.eventbus",
+  "version": "1.0.0",
+  "displayName": "Frost9 EventBus",
+  "description": "Generic, universal event bus system using R3 reactive extensions. Main-thread only, zero reflection, minimal API surface.",
+  "unity": "6000.0",
+  "author": {
+    "name": "Frost9",
+    "email": ""
+  },
+  "dependencies": {
+    "com.cysharp.r3": "1.0.0",
+    "com.cysharp.unitask": "2.3.3"
+  },
+  "keywords": [
+    "events",
+    "reactive",
+    "r3",
+    "messaging",
+    "eventbus"
+  ],
+  "category": "Framework"
+}

@@ -1,0 +1,21 @@
+{
+  "name": "com.frost9.eventbus",
+  "version": "1.0.0",
+  "displayName": "Frost9 Event Bus",
+  "description": "Universal R3-based reactive event system for Unity",
+  "unity": "6000.0",
+  "dependencies": {
+    "com.cysharp.r3": "1.1.8",
+    "com.cysharp.unitask": "2.3.3"
+  },
+  "keywords": [
+    "events",
+    "reactive",
+    "R3",
+    "universal",
+    "eventbus"
+  ],
+  "author": {
+    "name": "Frost9"
+  }
+}

@@ -1,0 +1,19 @@
+{
+    "name": "Frost9.EventBus.Editor",
+    "rootNamespace": "Frost9.EventBus.Editor",
+    "references": [
+        "GUID:95b5e319077c71b4f9a3ad6ee294b5ed",
+        "Frost9.EventBus"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
