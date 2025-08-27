@@ -148,6 +148,12 @@ IDisposable SubscribeSafe<T>(Action<T> onNext)
 - **No assembly scanning** - instance-based lifecycle
 - **IL2CPP friendly** - no dynamic code generation
 
+## Behavior Notes
+
+- **Early publish is ignored** - Publishing before any observer subscribes will be dropped (no buffering)
+- **On-demand subject creation** - Subjects only exist when someone is observing
+- **No sticky/replay** - Events are not replayed to new subscribers
+
 ## Migration from Static EventBus
 
 **Old:**

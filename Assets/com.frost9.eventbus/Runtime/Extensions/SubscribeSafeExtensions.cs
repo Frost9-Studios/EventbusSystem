@@ -6,9 +6,9 @@ namespace Frost9.EventBus
 {
     public static class SubscribeSafeExtensions
     {
-        public static IDisposable SubscribeSafe<T>(this Observable<T> src, Action<T> onNext)
+        public static IDisposable SubscribeSafe<T>(this Observable<T> source, Action<T> onNext)
         {
-            return src.Subscribe(v =>
+            return source.Subscribe(v =>
             {
                 try { onNext(v); }
                 catch (Exception ex) { Debug.LogException(ex); }

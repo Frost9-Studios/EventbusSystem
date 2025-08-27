@@ -31,7 +31,9 @@ namespace Frost9.EventBus
             if (_disposed) return;
             if (Thread.CurrentThread.ManagedThreadId != _mainThreadId)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.LogWarning($"Publish<{typeof(T).Name}> ignored: not on main thread.");
+#endif
                 return;
             }
             if (_subjects.TryGetValue(typeof(T), out var o))
