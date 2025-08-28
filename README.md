@@ -15,7 +15,6 @@ Universal R3-based reactive event system for Unity 6.
 
 ```csharp
 using Frost9.EventBus;
-using Frost9.EventBus.Extensions;
 
 // Define your events (any type works)
 public readonly struct HealthChanged 
