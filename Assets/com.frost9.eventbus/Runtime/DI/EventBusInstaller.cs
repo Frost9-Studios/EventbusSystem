@@ -1,3 +1,4 @@
+using System;
 using VContainer;
 using VContainer.Unity;
 
@@ -14,6 +15,9 @@ namespace Frost9.EventBus
         /// <param name="builder">The container builder to register services with.</param>
         public void Install(IContainerBuilder builder)
         {
+            // Defensive check
+            if (builder is null) throw new ArgumentNullException(nameof(builder));
+
             builder.Register<EventBus>(Lifetime.Singleton).As<IEventBus>();
         }
     }

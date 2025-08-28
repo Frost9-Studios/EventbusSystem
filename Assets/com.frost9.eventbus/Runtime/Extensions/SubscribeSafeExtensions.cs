@@ -19,6 +19,9 @@ namespace Frost9.EventBus
         /// <returns>An IDisposable that can be used to unsubscribe from the observable.</returns>
         public static IDisposable SubscribeSafe<T>(this Observable<T> source, Action<T> onNext)
         {
+            if (source is null) throw new ArgumentNullException(nameof(source));
+            if (onNext is null) throw new ArgumentNullException(nameof(onNext));
+
             return source.Subscribe(v =>
             {
                 try { onNext(v); }

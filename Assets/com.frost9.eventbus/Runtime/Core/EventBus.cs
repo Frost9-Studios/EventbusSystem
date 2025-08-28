@@ -1,7 +1,7 @@
+using R3;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using R3;
 using UnityEngine;
 
 namespace Frost9.EventBus
@@ -44,7 +44,8 @@ namespace Frost9.EventBus
         /// <param name="evt">The event data to publish.</param>
         public void Publish<T>(in T evt)
         {
-            if (_disposed) return;
+            if (_disposed) return;  // post-dispose publish is a no-op by design
+
             if (Thread.CurrentThread.ManagedThreadId != _mainThreadId)
             {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
