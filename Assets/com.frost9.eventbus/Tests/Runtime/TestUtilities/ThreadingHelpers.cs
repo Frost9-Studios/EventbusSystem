@@ -91,7 +91,7 @@ namespace Frost9.EventBus.Tests
     /// </summary>
     public class ThreadBarrier
     {
-        private readonly ManualResetEventSlim _event = new ManualResetEventSlim(false);
+        private readonly ManualResetEventSlim _event = new(false);
         private volatile bool _disposed = false;
 
         /// <summary>

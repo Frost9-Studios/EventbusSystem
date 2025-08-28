@@ -99,7 +99,7 @@ namespace Frost9.EventBus.Tests
         public void Reset()
         {
             DeliveryCount = 0;
-            LastValue = default(T);
+            LastValue = default;
         }
     }
 

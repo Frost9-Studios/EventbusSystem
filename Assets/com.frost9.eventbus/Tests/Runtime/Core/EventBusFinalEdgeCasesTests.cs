@@ -279,11 +279,12 @@ namespace Frost9.EventBus.Tests
             var received2 = new List<TestEvent>();
             var received3 = new List<TestEvent>();
 
-            var compositeDisposable = new CompositeDisposable();
-
-            compositeDisposable.Add(_eventBus.Observe<TestEvent>().Subscribe(received1.Add));
-            compositeDisposable.Add(_eventBus.Observe<TestEvent>().Subscribe(received2.Add));
-            compositeDisposable.Add(_eventBus.Observe<TestEvent>().Subscribe(received3.Add));
+            var compositeDisposable = new CompositeDisposable
+            {
+                _eventBus.Observe<TestEvent>().Subscribe(received1.Add),
+                _eventBus.Observe<TestEvent>().Subscribe(received2.Add),
+                _eventBus.Observe<TestEvent>().Subscribe(received3.Add)
+            };
 
             // Verify all subscriptions work
             _eventBus.Publish(new TestEvent(1));

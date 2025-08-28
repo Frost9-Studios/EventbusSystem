@@ -66,8 +66,10 @@ namespace Frost9.EventBus.Tests
             {
                 offThreadBus = new EventBus();
                 constructed.Set();
-            });
-            tA.IsBackground = true;
+            })
+            {
+                IsBackground = true
+            };
             tA.Start();
             constructed.WaitOne();
             ThreadingHelpers.RunOnDedicatedThread(() => { offThreadBus = new EventBus(); });
@@ -86,8 +88,10 @@ namespace Frost9.EventBus.Tests
             {
                 offThreadBus.Publish(new TestEvent(100));
                 published.Set();
-            });
-            tB.IsBackground = true;
+            })
+            {
+                IsBackground = true
+            };
             tB.Start();
             published.WaitOne();
             ThreadingHelpers.RunOnDedicatedThread(() => offThreadBus.Publish(new TestEvent(100)));
