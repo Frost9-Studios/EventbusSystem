@@ -70,15 +70,15 @@ public sealed class BusTestController : IStartable, ITickable, IDisposable
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             var v = _rng.Next(10, 101);
-            _bus.Publish(new HealthChanged(v));
             Log("FFFF66", $"[PUB] Published HealthChanged({v}).");
+            _bus.Publish(new HealthChanged(v));
         }
 
         // 4: Publish HealthChanged(0) to simulate death condition
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            _bus.Publish(new HealthChanged(0));
             Log("FFFF66", "[PUB] Published HealthChanged(0).");
+            _bus.Publish(new HealthChanged(0));
         }
 
         // 5: Start awaiting Next<HealthChanged> where Value <= 0

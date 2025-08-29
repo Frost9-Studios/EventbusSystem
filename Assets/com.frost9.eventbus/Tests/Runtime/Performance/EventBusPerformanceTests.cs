@@ -161,7 +161,7 @@ namespace Frost9.EventBus.Tests
 
             // Performance should scale reasonably (not exponentially)
             var firstResult = results[0];
-            var lastResult = results[results.Count - 1];
+            var lastResult = results[^1];
             var subscriberRatio = (double)lastResult.subscribers / firstResult.subscribers;
             var timeRatio = (double)lastResult.elapsedMs / Math.Max(1, firstResult.elapsedMs);
 
@@ -413,7 +413,6 @@ namespace Frost9.EventBus.Tests
         [Test]
         public void EventBus_MultipleEventTypes_EfficientRouting()
         {
-            const int eventTypesCount = 5;
             const int eventsPerType = 200;
             const int subscribersPerType = 10;
 
@@ -563,7 +562,7 @@ namespace Frost9.EventBus.Tests
         {
             public int Count { get; private set; }
 
-            public void OnNext(T value)
+            public void OnNext(T _)
             {
                 Count++;
             }

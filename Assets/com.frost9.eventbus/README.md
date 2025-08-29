@@ -38,12 +38,14 @@ bus.Publish(new HealthChanged(75));
 ### 1) DI Setup (VContainer)
 
 ```csharp
+using Frost9.EventBus;
+
 // Composition root (e.g., on your LifetimeScope)
 public class GameInstaller : LifetimeScope
 {
     protected override void Configure(IContainerBuilder builder)
     {
-        builder.Register<EventBus>(Lifetime.Singleton).As<IEventBus>();
+        builder.RegisterEventBus(); // Extension method - recommended approach
         builder.RegisterEntryPoint<BattleSystems>(); // optional
     }
 }
@@ -193,11 +195,13 @@ var damage = await bus.Next<DamageEvent>(cancellationToken: ct);
 ### VContainer Integration
 
 ```csharp
-public class GameInstaller : IInstaller
+using Frost9.EventBus;
+
+public class GameInstaller : LifetimeScope
 {
-    public void Install(IContainerBuilder builder)
+    protected override void Configure(IContainerBuilder builder)
     {
-        builder.RegisterInstance(new EventBusInstaller());
+        builder.RegisterEventBus(); // Extension method
     }
 }
 
